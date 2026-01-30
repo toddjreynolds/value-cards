@@ -450,7 +450,6 @@ export function SortScreen() {
           left: 0,
           right: 0,
           zIndex: 50,
-          backgroundColor: 'rgba(33, 33, 33, 0.4)',
           /* flex-direction is handled by CSS for responsiveness */
         }}
       >
@@ -543,9 +542,7 @@ export function SortScreen() {
               borderColor: dragState.nearZone === 'veryImportant' 
                 ? 'rgba(93, 148, 67, 0.8)' 
                 : 'rgba(255, 255, 255, 0.2)',
-              backgroundColor: dragState.nearZone === 'veryImportant'
-                ? 'rgba(93, 148, 67, 0.1)'
-                : 'rgba(255, 255, 255, 0.02)',
+              backgroundColor: 'rgba(33, 33, 33, 0.75)',
             }}
             style={{
               minHeight: '120px',
@@ -690,9 +687,7 @@ export function SortScreen() {
               borderColor: dragState.nearZone === 'notSure' 
                 ? 'rgba(200, 150, 50, 0.8)' 
                 : 'rgba(255, 255, 255, 0.2)',
-              backgroundColor: dragState.nearZone === 'notSure'
-                ? 'rgba(200, 150, 50, 0.1)'
-                : 'rgba(255, 255, 255, 0.02)',
+              backgroundColor: 'rgba(33, 33, 33, 0.75)',
             }}
             style={{
               minHeight: '120px',
@@ -837,9 +832,7 @@ export function SortScreen() {
               borderColor: dragState.nearZone === 'notImportant' 
                 ? 'rgba(197, 68, 92, 0.8)' 
                 : 'rgba(255, 255, 255, 0.2)',
-              backgroundColor: dragState.nearZone === 'notImportant'
-                ? 'rgba(197, 68, 92, 0.1)'
-                : 'rgba(255, 255, 255, 0.02)',
+              backgroundColor: 'rgba(33, 33, 33, 0.75)',
             }}
             style={{
               minHeight: '120px',
