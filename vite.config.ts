@@ -15,8 +15,6 @@ export default defineConfig({
       },
     },
   },
-  // Base path - update this when deploying
-  // For Framer embedding via iframe, you'll host the built files
-  // and set base to your hosting URL
-  base: './',
+  // Base path for GitHub Pages deployment
+  base: '/value-cards/',
 })
