@@ -42,19 +42,7 @@ body {
 
 /* Sort Screen Responsive Styles */
 .card-grid {
-  grid-template-columns: repeat(2, 252px);
-}
-
-@media (min-width: 640px) {
-  .card-grid {
-    grid-template-columns: repeat(3, 252px);
-  }
-}
-
-@media (min-width: 1024px) {
-  .card-grid {
-    grid-template-columns: repeat(4, 252px);
-  }
+  grid-template-columns: repeat(auto-fill, 252px);
 }
 
 /* Drop zones responsive */

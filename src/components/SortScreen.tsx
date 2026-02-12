@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
-import { Undo2, RotateCcw } from 'lucide-react';
+import { Undo2, RotateCcw, ArrowRight, Star } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import { Card } from './Card';
 import type { ValueCard } from '../data/values';
@@ -24,7 +24,8 @@ export function SortScreen() {
     sortCard,
     unsortCard, 
     finishSorting,
-    resetGame 
+    resetGame,
+    devAutoSort,
   } = useGameStore();
   
   const [dragState, setDragState] = useState<DragState>({ cardId: null, nearZone: null, dragX: null });
@@ -287,6 +288,7 @@ export function SortScreen() {
           position: 'absolute',
           top: '1rem',
           right: '1rem',
+          zIndex: 10,
           background: 'rgba(255, 255, 255, 0.2)',
           border: 'none',
           borderRadius: '0.5rem',
@@ -306,6 +308,37 @@ export function SortScreen() {
       >
         <RotateCcw size={20} color="#212121" />
       </button>
+
+      {/* Dev Auto-Sort Button */}
+      {import.meta.env.DEV && (
+        <button
+          onClick={devAutoSort}
+          title="Dev: Auto-sort cards"
+          style={{
+            position: 'absolute',
+            top: '3.5rem',
+            right: '1rem',
+            zIndex: 10,
+            background: 'rgba(255, 255, 255, 0.2)',
+            border: 'none',
+            borderRadius: '0.5rem',
+            padding: '0.5rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+          }}
+        >
+          <Star size={20} color="#212121" />
+        </button>
+      )}
 
       {/* Reset Confirmation Dialog */}
       <AnimatePresence>
@@ -427,8 +460,7 @@ export function SortScreen() {
           className="card-grid"
           style={{
             display: 'grid',
-            columnGap: '56px',
-            rowGap: '48px',
+            gap: '12px',
             justifyContent: 'center',
             margin: '0 auto',
           }}
@@ -889,37 +921,86 @@ export function SortScreen() {
         </div>
       </div>
 
-      {/* Continue Button */}
-      {canFinish && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{ 
-            padding: '1rem',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
-          <motion.button
-            onClick={finishSorting}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+      {/* Sorting Complete Modal */}
+      <AnimatePresence>
+        {canFinish && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             style={{
-              padding: '1rem 2rem',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              backgroundColor: '#5D9443',
-              color: 'white',
-              border: 'none',
-              borderRadius: '9999px',
-              cursor: 'pointer',
-              fontFamily: "'Special Gothic Condensed One', sans-serif",
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
             }}
           >
-            Continue with {veryImportantCards.length} Values
-          </motion.button>
-        </motion.div>
-      )}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                backgroundColor: '#2A2A2A',
+                borderRadius: '1rem',
+                padding: '2rem',
+                maxWidth: '440px',
+                width: '90%',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+                textAlign: 'center',
+              }}
+            >
+              <h2 style={{
+                fontFamily: "'Special Gothic Condensed One', sans-serif",
+                fontSize: '32px',
+                color: 'white',
+                marginBottom: '0.75rem',
+              }}>
+                YOU'RE ALL SORTED!
+              </h2>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '16px',
+                color: '#D4D4D4',
+                lineHeight: 1.6,
+                marginBottom: '1.5rem',
+              }}>
+                {veryImportantCards.length > 10
+                  ? `You selected ${veryImportantCards.length} values as very important. Next, let's narrow those down to your top 10.`
+                  : `Great work! Now let's arrange your ${veryImportantCards.length} most important values in a pyramid.`
+                }
+              </p>
+              <motion.button
+                onClick={finishSorting}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{
+                  padding: '0.875rem 2rem',
+                  fontSize: '18px',
+                  fontFamily: "'Special Gothic Condensed One', sans-serif",
+                  backgroundColor: '#5D9443',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '9999px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                Next <ArrowRight size={18} />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

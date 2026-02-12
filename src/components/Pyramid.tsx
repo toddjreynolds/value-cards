@@ -1,170 +1,254 @@
-import { useState } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  rectSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { useGameStore } from '../store/useGameStore';
 import { Card } from './Card';
 import type { ValueCard } from '../data/values';
 
-export function Pyramid() {
-  const { pyramidSlots, unplacedCards, veryImportantCards, placeCardInPyramid, removeCardFromPyramid } = useGameStore();
-  const [draggedCard, setDraggedCard] = useState<ValueCard | null>(null);
+// Pyramid sizing constants
+const GAP = 8;
+// Default "grid" card dimensions as max
+const MAX_CARD_WIDTH = 252;
+const MAX_CARD_HEIGHT = 180;
+const MAX_FONT_SIZE = 34;
+const ASPECT_RATIO = MAX_CARD_HEIGHT / MAX_CARD_WIDTH; // ~0.714
 
-  const getCardById = (id: string | null) => {
-    if (!id) return null;
-    return veryImportantCards.find(c => c.id === id) || null;
+// Sortable card item
+function SortableCard({ card, cardStyle }: { card: ValueCard; cardStyle: React.CSSProperties }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: card.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.3 : 1,
+    cursor: 'grab',
+    zIndex: isDragging ? 100 : 1,
   };
-
-  const handleDragStart = (card: ValueCard) => {
-    setDraggedCard(card);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedCard(null);
-  };
-
-  const handleDrop = (row: number, col: number) => {
-    if (draggedCard) {
-      placeCardInPyramid(draggedCard.id, row, col);
-    }
-    handleDragEnd();
-  };
-
-  const handleSlotClick = (row: number, col: number) => {
-    const slot = pyramidSlots.find(s => s.row === row && s.col === col);
-    if (slot?.cardId) {
-      removeCardFromPyramid(row, col);
-    }
-  };
-
-  const filledCount = pyramidSlots.filter(s => s.cardId !== null).length;
-  const totalSlots = 10;
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-full w-full px-4 py-6 overflow-y-auto">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Card
+        card={card}
+        isNearDropZone
+        style={{
+          ...cardStyle,
+          cursor: 'grab',
+        }}
+      />
+    </div>
+  );
+}
+
+export function Pyramid() {
+  const { pyramidSlots, veryImportantCards, reorderPyramidCards, finishPyramid } = useGameStore();
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const pyramidRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  // Measure pyramid container width
+  useEffect(() => {
+    const el = pyramidRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(entries => {
+      setContainerWidth(entries[0].contentRect.width);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // All cards same size: 4 cards + 3 gaps fill the container, capped at grid default
+  const cardWidth = containerWidth > 0
+    ? Math.min((containerWidth - 3 * GAP) / 4, MAX_CARD_WIDTH)
+    : MAX_CARD_WIDTH;
+  const cardHeight = cardWidth * ASPECT_RATIO;
+  const fontSize = Math.round(MAX_FONT_SIZE * (cardWidth / MAX_CARD_WIDTH));
+
+  const cardStyle: React.CSSProperties = {
+    width: `${cardWidth}px`,
+    height: `${cardHeight}px`,
+    fontSize: `${fontSize}px`,
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
+  // Build ordered card array from pyramid slots
+  const orderedCards = useMemo(() => {
+    const cards: ValueCard[] = [];
+    for (const slot of pyramidSlots) {
+      if (slot.cardId) {
+        const card = veryImportantCards.find(c => c.id === slot.cardId);
+        if (card) cards.push(card);
+      }
+    }
+    return cards;
+  }, [pyramidSlots, veryImportantCards]);
+
+  const orderedIds = orderedCards.map(c => c.id);
+  const activeCard = activeId ? veryImportantCards.find(c => c.id === activeId) || null : null;
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = orderedIds.indexOf(active.id as string);
+    const newIndex = orderedIds.indexOf(over.id as string);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const newOrder = arrayMove(orderedIds, oldIndex, newIndex);
+    reorderPyramidCards(newOrder);
+  };
+
+  // Split ordered cards into pyramid rows
+  const rows = [
+    orderedCards.slice(0, 1),   // row 0: 1 card
+    orderedCards.slice(1, 3),   // row 1: 2 cards
+    orderedCards.slice(3, 6),   // row 2: 3 cards
+    orderedCards.slice(6, 10),  // row 3: 4 cards
+  ];
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'start',
+        minHeight: '100vh',
+        width: '100%',
+        padding: '1.5rem 1rem',
+        overflowY: 'auto',
+      }}
+    >
       {/* Header */}
-      <div className="text-center mb-4">
-        <h2 className="text-xl font-bold text-white mb-2">Arrange Your Values</h2>
-        <p className="text-gray-400 text-sm">
-          Drag your top value to the peak. Most important at top, foundation at bottom.
-        </p>
-        <p className="text-gray-500 text-xs mt-1">
-          {filledCount} / {totalSlots} placed
+      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <h2
+          style={{
+            fontFamily: "'Special Gothic Condensed One', sans-serif",
+            fontSize: '28px',
+            color: 'white',
+            marginBottom: '0.5rem',
+          }}
+        >
+          ARRANGE YOUR VALUES
+        </h2>
+        <p
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: '16px',
+            color: '#D4D4D4',
+            lineHeight: 1.5,
+          }}
+        >
+          Drag to reorder. Most important at the top.
         </p>
       </div>
+
+      {/* Finish Button */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ marginBottom: '1.5rem' }}
+      >
+        <motion.button
+          onClick={finishPyramid}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            padding: '0.75rem 1.5rem',
+            fontSize: '16px',
+            fontFamily: "'DM Sans', sans-serif",
+            fontWeight: 600,
+            backgroundColor: '#5D9443',
+            color: 'white',
+            border: 'none',
+            borderRadius: '9999px',
+            cursor: 'pointer',
+          }}
+        >
+          Finish
+        </motion.button>
+      </motion.div>
 
       {/* Pyramid */}
-      <div className="flex flex-col items-center gap-2 mb-6">
-        {[0, 1, 2, 3].map((row) => (
-          <div key={row} className="flex gap-2 justify-center">
-            {pyramidSlots
-              .filter((slot) => slot.row === row)
-              .map((slot) => {
-                const card = getCardById(slot.cardId);
-                const isDropTarget = draggedCard && !card;
-                
-                return (
-                  <motion.div
-                    key={`${slot.row}-${slot.col}`}
-                    className={`
-                      relative rounded-xl
-                      ${row === 0 ? 'w-28 h-[8.4rem]' : row === 1 ? 'w-24 h-[7.2rem]' : row === 2 ? 'w-20 h-24' : 'w-[4.5rem] h-[5.4rem]'}
-                      ${!card ? 'border-2 border-dashed border-gray-700' : ''}
-                      ${isDropTarget ? 'border-[#5D9443] bg-[#5D9443]/10' : ''}
-                      transition-colors duration-200
-                    `}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      e.currentTarget.classList.add('border-[#5D9443]', 'bg-[#5D9443]/10');
-                    }}
-                    onDragLeave={(e) => {
-                      e.currentTarget.classList.remove('border-[#5D9443]', 'bg-[#5D9443]/10');
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      e.currentTarget.classList.remove('border-[#5D9443]', 'bg-[#5D9443]/10');
-                      handleDrop(slot.row, slot.col);
-                    }}
-                    onClick={() => handleSlotClick(slot.row, slot.col)}
-                    whileHover={card ? { scale: 1.05 } : {}}
-                  >
-                    {card ? (
-                      <motion.div
-                        draggable
-                        onDragStart={() => handleDragStart(card)}
-                        onDragEnd={handleDragEnd}
-                        className="cursor-grab active:cursor-grabbing w-full h-full"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                      >
-                        <Card 
-                          card={card} 
-                          size={row === 0 ? 'md' : row === 1 ? 'sm' : 'sm'}
-                          className="w-full h-full"
-                          style={{ width: '100%', height: '100%' }}
-                        />
-                      </motion.div>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
-                        {row === 0 && '#1'}
-                        {row === 1 && `#${slot.col + 2}`}
-                        {row === 2 && `#${slot.col + 4}`}
-                        {row === 3 && `#${slot.col + 7}`}
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
-          </div>
-        ))}
-      </div>
-
-      {/* Unplaced cards */}
-      {unplacedCards.length > 0 && (
-        <div className="w-full max-w-md">
-          <p className="text-gray-500 text-sm mb-3 text-center">
-            Drag cards to the pyramid:
-          </p>
-          <motion.div 
-            className="flex flex-wrap justify-center gap-2"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: {
-                transition: { staggerChildren: 0.05 }
-              }
-            }}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={orderedIds} strategy={rectSortingStrategy}>
+          <div
+            ref={pyramidRef}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: `${GAP}px`, width: '100%' }}
           >
-            {unplacedCards.map((card) => (
+            {rows.map((rowCards, rowIndex) => (
               <motion.div
-                key={card.id}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                draggable
-                onDragStart={() => handleDragStart(card)}
-                onDragEnd={handleDragEnd}
-                className="cursor-grab active:cursor-grabbing"
-                whileHover={{ scale: 1.1, zIndex: 10 }}
-                whileTap={{ scale: 0.95 }}
+                key={rowIndex}
+                style={{ display: 'flex', gap: `${GAP}px`, justifyContent: 'center' }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: rowIndex * 0.1 }}
               >
-                <Card card={card} size="sm" />
+                {rowCards.map((card) => (
+                    <SortableCard
+                      key={card.id}
+                      card={card}
+                      cardStyle={cardStyle}
+                    />
+                ))}
               </motion.div>
             ))}
-          </motion.div>
-        </div>
-      )}
+          </div>
+        </SortableContext>
 
-      {/* Complete message */}
-      {filledCount === totalSlots && (
-        <motion.p 
-          className="text-[#5D9443] text-lg font-bold mt-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          Pyramid complete! Viewing results...
-        </motion.p>
-      )}
+        <DragOverlay>
+          {activeCard && (
+            <Card
+              card={activeCard}
+              isNearDropZone
+              style={{
+                ...cardStyle,
+                cursor: 'grabbing',
+                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)',
+              }}
+            />
+          )}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }

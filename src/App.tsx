@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useGameStore } from './store/useGameStore';
 import { IntroScreen } from './components/IntroScreen';
 import { SortScreen } from './components/SortScreen';
+import { NarrowingScreen } from './components/NarrowingScreen';
 import { Pyramid } from './components/Pyramid';
 import { Results } from './components/Results';
 import { BackgroundMusic } from './components/BackgroundMusic';
@@ -39,6 +40,18 @@ function App() {
             style={{ width: '100%', flex: 1, display: 'flex' }}
           >
             <SortScreen />
+          </motion.div>
+        )}
+
+        {phase === 'narrowing' && (
+          <motion.div
+            key="narrowing"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            style={{ width: '100%', flex: 1, display: 'flex' }}
+          >
+            <NarrowingScreen />
           </motion.div>
         )}
         

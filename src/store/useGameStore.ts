@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { VALUES, shuffleArray, type ValueCard } from '../data/values';
 
-export type GamePhase = 'intro' | 'sort' | 'pyramid' | 'results';
+export type GamePhase = 'intro' | 'sort' | 'narrowing' | 'pyramid' | 'results';
 
 export type PyramidSlot = {
   row: number;
@@ -16,6 +16,7 @@ interface GameState {
   veryImportantCards: ValueCard[];
   notSureCards: ValueCard[];
   notImportantCards: ValueCard[];
+  selectedNarrowingCards: ValueCard[];
   pyramidSlots: PyramidSlot[];
   unplacedCards: ValueCard[];
   
@@ -24,10 +25,15 @@ interface GameState {
   sortCard: (cardId: string, category: 'veryImportant' | 'notSure' | 'notImportant') => void;
   unsortCard: (cardId: string) => void;
   finishSorting: () => void;
+  toggleNarrowingCard: (cardId: string) => void;
+  finishNarrowing: () => void;
+  reorderPyramidCards: (orderedCardIds: string[]) => void;
+  finishPyramid: () => void;
   placeCardInPyramid: (cardId: string, row: number, col: number) => void;
   removeCardFromPyramid: (row: number, col: number) => void;
   setPhase: (phase: GamePhase) => void;
   resetGame: () => void;
+  devAutoSort: () => void;
 }
 
 const createInitialPyramidSlots = (): PyramidSlot[] => {
@@ -44,6 +50,18 @@ const createInitialPyramidSlots = (): PyramidSlot[] => {
   return slots;
 };
 
+// Pre-fill pyramid slots from an ordered array of cards.
+// Index 0 → row 0 col 0 (top), then row 1, row 2, row 3.
+const prefillPyramidSlots = (cards: ValueCard[]): PyramidSlot[] => {
+  const slots = createInitialPyramidSlots();
+  cards.forEach((card, index) => {
+    if (index < slots.length) {
+      slots[index] = { ...slots[index], cardId: card.id };
+    }
+  });
+  return slots;
+};
+
 export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
@@ -54,6 +72,7 @@ export const useGameStore = create<GameState>()(
       veryImportantCards: [],
       notSureCards: [],
       notImportantCards: [],
+      selectedNarrowingCards: [],
       pyramidSlots: createInitialPyramidSlots(),
       unplacedCards: [],
 
@@ -65,6 +84,7 @@ export const useGameStore = create<GameState>()(
           veryImportantCards: [],
           notSureCards: [],
           notImportantCards: [],
+          selectedNarrowingCards: [],
           pyramidSlots: createInitialPyramidSlots(),
           unplacedCards: [],
         });
@@ -124,10 +144,60 @@ export const useGameStore = create<GameState>()(
 
       finishSorting: () => {
         const { veryImportantCards } = get();
+        if (veryImportantCards.length > 10) {
+          // Need narrowing phase to pick 10
+          set({
+            phase: 'narrowing',
+            selectedNarrowingCards: [],
+          });
+        } else {
+          // 10 or fewer — go straight to pyramid, pre-filled
+          set({
+            phase: 'pyramid',
+            pyramidSlots: prefillPyramidSlots(veryImportantCards),
+            unplacedCards: [],
+          });
+        }
+      },
+
+      toggleNarrowingCard: (cardId) => {
+        const { selectedNarrowingCards, veryImportantCards } = get();
+        const existing = selectedNarrowingCards.find(c => c.id === cardId);
+        if (existing) {
+          // Deselect
+          set({ selectedNarrowingCards: selectedNarrowingCards.filter(c => c.id !== cardId) });
+        } else {
+          // Select — cap at 10
+          if (selectedNarrowingCards.length >= 10) return;
+          const card = veryImportantCards.find(c => c.id === cardId);
+          if (!card) return;
+          set({ selectedNarrowingCards: [...selectedNarrowingCards, card] });
+        }
+      },
+
+      finishNarrowing: () => {
+        const { selectedNarrowingCards } = get();
         set({
           phase: 'pyramid',
-          unplacedCards: veryImportantCards,
+          pyramidSlots: prefillPyramidSlots(selectedNarrowingCards),
+          unplacedCards: [],
+          // Update veryImportantCards to only the selected 10 so pyramid/results can reference them
+          veryImportantCards: selectedNarrowingCards,
         });
+      },
+
+      reorderPyramidCards: (orderedCardIds) => {
+        const slots = createInitialPyramidSlots();
+        orderedCardIds.forEach((cardId, index) => {
+          if (index < slots.length) {
+            slots[index] = { ...slots[index], cardId };
+          }
+        });
+        set({ pyramidSlots: slots });
+      },
+
+      finishPyramid: () => {
+        set({ phase: 'results' });
       },
 
       placeCardInPyramid: (cardId, row, col) => {
@@ -230,6 +300,26 @@ export const useGameStore = create<GameState>()(
           veryImportantCards: [],
           notSureCards: [],
           notImportantCards: [],
+          selectedNarrowingCards: [],
+          pyramidSlots: createInitialPyramidSlots(),
+          unplacedCards: [],
+        });
+      },
+
+      devAutoSort: () => {
+        const shuffled = shuffleArray([...VALUES]);
+        // 15 Very Important, 8 Not Sure Yet, rest Less Important, 1 unsorted
+        const veryImportant = shuffled.slice(0, 15);
+        const notSure = shuffled.slice(15, 23);
+        const notImportant = shuffled.slice(23, 54);
+        const unsorted = shuffled.slice(54); // 1 card remaining
+        set({
+          phase: 'sort',
+          unsortedCards: unsorted,
+          veryImportantCards: veryImportant,
+          notSureCards: notSure,
+          notImportantCards: notImportant,
+          selectedNarrowingCards: [],
           pyramidSlots: createInitialPyramidSlots(),
           unplacedCards: [],
         });
@@ -237,9 +327,9 @@ export const useGameStore = create<GameState>()(
     }),
     {
       name: 'value-cards-game',
-      version: 3, // Bumped version to trigger migration from old state
+      version: 4, // Bumped for narrowing phase + pyramid pre-fill
       migrate: (persistedState: unknown, version: number) => {
-        if (version < 3) {
+        if (version < 4) {
           // Reset to new state structure when migrating from old version
           return {
             phase: 'intro' as const,
@@ -247,6 +337,7 @@ export const useGameStore = create<GameState>()(
             veryImportantCards: [],
             notSureCards: [],
             notImportantCards: [],
+            selectedNarrowingCards: [],
             pyramidSlots: createInitialPyramidSlots(),
             unplacedCards: [],
           };
