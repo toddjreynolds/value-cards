@@ -309,9 +309,8 @@ export function SortScreen() {
         <RotateCcw size={20} color="#212121" />
       </button>
 
-      {/* Dev Auto-Sort Button */}
-      {import.meta.env.DEV && (
-        <button
+      {/* Quick-Sort Button */}
+      <button
           onClick={devAutoSort}
           title="Dev: Auto-sort cards"
           style={{
@@ -337,8 +336,7 @@ export function SortScreen() {
           }}
         >
           <Star size={20} color="#212121" />
-        </button>
-      )}
+      </button>
 
       {/* Reset Confirmation Dialog */}
       <AnimatePresence>
