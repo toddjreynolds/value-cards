@@ -100,7 +100,7 @@ export function IntroScreen() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
       >
-        Sort through 55 value cards to identify what matters most to you. 
+        Sort through 82 value cards to identify what matters most to you. 
         Narrow down to your top 10 and rank them in order of importance.
       </motion.p>
 

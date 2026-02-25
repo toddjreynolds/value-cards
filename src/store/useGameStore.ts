@@ -308,11 +308,10 @@ export const useGameStore = create<GameState>()(
 
       devAutoSort: () => {
         const shuffled = shuffleArray([...VALUES]);
-        // 15 Very Important, 8 Not Sure Yet, rest Less Important, 1 unsorted
         const veryImportant = shuffled.slice(0, 15);
         const notSure = shuffled.slice(15, 23);
-        const notImportant = shuffled.slice(23, 54);
-        const unsorted = shuffled.slice(54); // 1 card remaining
+        const notImportant = shuffled.slice(23, -1);
+        const unsorted = shuffled.slice(-1);
         set({
           phase: 'sort',
           unsortedCards: unsorted,
@@ -327,9 +326,9 @@ export const useGameStore = create<GameState>()(
     }),
     {
       name: 'value-cards-game',
-      version: 4, // Bumped for narrowing phase + pyramid pre-fill
+      version: 5, // Bumped for 82-value list
       migrate: (persistedState: unknown, version: number) => {
-        if (version < 4) {
+        if (version < 5) {
           // Reset to new state structure when migrating from old version
           return {
             phase: 'intro' as const,
