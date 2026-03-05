@@ -25,7 +25,7 @@ export function NarrowingScreen() {
         position: 'relative',
         minHeight: '100vh',
         width: '100%',
-        backgroundColor: '#212121',
+        backgroundColor: '#232525',
         padding: '1.5rem',
         display: 'flex',
         flexDirection: 'column',
@@ -59,7 +59,7 @@ export function NarrowingScreen() {
           style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: '14px',
-            color: selectedCount === 10 ? '#5D9443' : '#8A8686',
+            color: selectedCount === 10 ? '#3274F9' : '#8A8686',
             marginTop: '0.5rem',
             fontWeight: 600,
           }}
@@ -87,7 +87,7 @@ export function NarrowingScreen() {
                 fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600,
                 backgroundColor: 'white',
-                color: '#212121',
+                color: '#232525',
                 border: 'none',
                 borderRadius: '9999px',
                 cursor: 'pointer',
@@ -153,7 +153,7 @@ export function NarrowingScreen() {
                       pointerEvents: 'none',
                     }}
                   >
-                    <Check size={20} color="#1C1C1C" strokeWidth={3} />
+                    <Check size={20} color="#2A2D2D" strokeWidth={3} />
                   </motion.div>
                 )}
               </AnimatePresence>

@@ -14,7 +14,7 @@ function App() {
     <div style={{ 
       width: '100%', 
       minHeight: '100vh', 
-      backgroundColor: '#212121',
+      backgroundColor: '#232525',
       display: 'flex',
       flexDirection: 'column',
     }}>

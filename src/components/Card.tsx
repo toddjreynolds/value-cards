@@ -24,8 +24,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     const sizeStyle = sizeStyles[size];
     
     // When near drop zone, swap colors: card color becomes background, text becomes dark
-    const backgroundColor = isNearDropZone ? card.color : '#242424';
-    const textColor = isNearDropZone ? '#1C1C1C' : card.color;
+    const backgroundColor = isNearDropZone ? card.color : '#2A2D2D';
+    const textColor = isNearDropZone ? '#2A2D2D' : card.color;
     
     return (
       <motion.div

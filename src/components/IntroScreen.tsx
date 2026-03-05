@@ -77,7 +77,7 @@ export function IntroScreen() {
       >
         Discover Your<br />
         <span style={{
-          background: 'linear-gradient(to right, #E7E578, #C5445C, #6D5391)',
+          background: 'linear-gradient(to right, #3274F9, #CFED5A, #CCF7A9)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
@@ -122,11 +122,11 @@ export function IntroScreen() {
             width: '1.5rem',
             height: '1.5rem',
             borderRadius: '50%',
-            backgroundColor: '#1C1C1C',
+            backgroundColor: '#2A2D2D',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#E7E578',
+            color: '#3274F9',
             fontSize: '0.75rem',
           }}>1</span>
           <span>Sort into important vs less important</span>
@@ -136,11 +136,11 @@ export function IntroScreen() {
             width: '1.5rem',
             height: '1.5rem',
             borderRadius: '50%',
-            backgroundColor: '#1C1C1C',
+            backgroundColor: '#2A2D2D',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#C36D38',
+            color: '#CFED5A',
             fontSize: '0.75rem',
           }}>2</span>
           <span>Rank in a pyramid</span>
@@ -150,11 +150,11 @@ export function IntroScreen() {
             width: '1.5rem',
             height: '1.5rem',
             borderRadius: '50%',
-            backgroundColor: '#1C1C1C',
+            backgroundColor: '#2A2D2D',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#6D5391',
+            color: '#CCF7A9',
             fontSize: '0.75rem',
           }}>3</span>
           <span>Discover your top values</span>
@@ -167,7 +167,7 @@ export function IntroScreen() {
         style={{
           padding: '1rem 2rem',
           borderRadius: '9999px',
-          background: 'linear-gradient(to right, #6D5391, #3E7493)',
+          background: 'linear-gradient(to right, #3274F9, #CCF7A9)',
           color: 'white',
           fontWeight: 'bold',
           fontSize: '1.125rem',

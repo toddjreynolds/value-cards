@@ -1,10 +1,7 @@
 export const CARD_COLORS = [
-  '#E7E578', // yellow
-  '#C36D38', // orange
-  '#C5445C', // red
-  '#6D5391', // purple
-  '#3E7493', // teal
-  '#5D9443', // green
+  '#3274F9', // blue
+  '#CFED5A', // yellow-green
+  '#CCF7A9', // light green
 ] as const;
 
 export type ValueCard = {

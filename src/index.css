@@ -2,14 +2,11 @@
 @import "tailwindcss";
 
 :root {
-  --color-yellow: #E7E578;
-  --color-orange: #C36D38;
-  --color-red: #C5445C;
-  --color-purple: #6D5391;
-  --color-teal: #3E7493;
-  --color-green: #5D9443;
-  --color-card-bg: #1C1C1C;
-  --color-app-bg: #212121;
+  --color-blue: #3274F9;
+  --color-yellow-green: #CFED5A;
+  --color-light-green: #CCF7A9;
+  --color-card-bg: #2A2D2D;
+  --color-app-bg: #232525;
 }
 
 * {
@@ -25,7 +22,7 @@ html {
 
 body {
   font-family: 'Special Gothic Condensed One', sans-serif;
-  background-color: #212121;
+  background-color: #232525;
   color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

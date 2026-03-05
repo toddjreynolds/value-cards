@@ -133,7 +133,7 @@ export function BackgroundMusic({ trackUrl }: BackgroundMusicProps) {
               exit={{ opacity: 0, scale: 0.8, y: 10 }}
               transition={{ duration: 0.2 }}
               style={{
-                backgroundColor: '#1C1C1C',
+                backgroundColor: '#2A2D2D',
                 borderRadius: '12px',
                 padding: '12px 16px',
                 display: 'flex',
@@ -151,7 +151,7 @@ export function BackgroundMusic({ trackUrl }: BackgroundMusicProps) {
                   width: '36px',
                   height: '36px',
                   borderRadius: '50%',
-                  backgroundColor: '#6D5391',
+                  backgroundColor: '#3274F9',
                   border: 'none',
                   cursor: isReady ? 'pointer' : 'default',
                   display: 'flex',
@@ -161,10 +161,10 @@ export function BackgroundMusic({ trackUrl }: BackgroundMusicProps) {
                   transition: 'transform 0.15s, background-color 0.15s',
                 }}
                 onMouseEnter={(e) => {
-                  if (isReady) e.currentTarget.style.backgroundColor = '#7d63a1';
+                  if (isReady) e.currentTarget.style.backgroundColor = '#4A8BFA';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#6D5391';
+                  e.currentTarget.style.backgroundColor = '#3274F9';
                 }}
               >
                 {isPlaying ? (
@@ -265,8 +265,8 @@ export function BackgroundMusic({ trackUrl }: BackgroundMusicProps) {
                 width: '48px',
                 height: '48px',
                 borderRadius: '50%',
-                backgroundColor: '#1C1C1C',
-                border: (needsInteraction || isPlaying) ? '2px solid #6D5391' : '1px solid #333',
+                backgroundColor: '#2A2D2D',
+                border: (needsInteraction || isPlaying) ? '2px solid #3274F9' : '1px solid #333',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -284,7 +284,7 @@ export function BackgroundMusic({ trackUrl }: BackgroundMusicProps) {
                     position: 'absolute',
                     inset: '-4px',
                     borderRadius: '50%',
-                    border: '2px solid #6D5391',
+                    border: '2px solid #3274F9',
                   }}
                   animate={{ 
                     scale: [1, 1.15, 1],
@@ -299,7 +299,7 @@ export function BackgroundMusic({ trackUrl }: BackgroundMusicProps) {
               )}
               
               {/* Music note icon */}
-              <svg width="24" height="24" viewBox="0 0 24 24" fill={isPlaying ? '#6D5391' : '#9CA3AF'}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill={isPlaying ? '#3274F9' : '#9CA3AF'}>
                 <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
               </svg>
             </motion.button>

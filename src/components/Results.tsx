@@ -18,7 +18,7 @@ export function Results() {
     
     try {
       const dataUrl = await toPng(pyramidRef.current, {
-        backgroundColor: '#212121',
+        backgroundColor: '#232525',
         pixelRatio: 2,
       });
       
@@ -37,7 +37,7 @@ export function Results() {
     
     try {
       const dataUrl = await toPng(pyramidRef.current, {
-        backgroundColor: '#212121',
+        backgroundColor: '#232525',
         pixelRatio: 2,
       });
       
@@ -84,7 +84,7 @@ export function Results() {
       <motion.div 
         ref={pyramidRef}
         className="p-6 rounded-2xl"
-        style={{ backgroundColor: '#0D0D0D' }}
+        style={{ backgroundColor: '#1A1C1C' }}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
@@ -142,13 +142,13 @@ export function Results() {
       >
         <button
           onClick={handleShareNative}
-          className="px-6 py-3 rounded-full bg-gradient-to-r from-[#6D5391] to-[#3E7493] text-white font-bold hover:opacity-90 transition-opacity"
+          className="px-6 py-3 rounded-full bg-gradient-to-r from-[#3274F9] to-[#CCF7A9] text-white font-bold hover:opacity-90 transition-opacity"
         >
           Share Your Values
         </button>
         <button
           onClick={handleShare}
-          className="px-6 py-3 rounded-full bg-[#1C1C1C] text-white font-bold border border-gray-700 hover:border-gray-500 transition-colors"
+          className="px-6 py-3 rounded-full bg-[#2A2D2D] text-white font-bold border border-gray-700 hover:border-gray-500 transition-colors"
         >
           Download Image
         </button>

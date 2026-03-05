@@ -275,7 +275,7 @@ export function SortScreen() {
         position: 'relative',
         minHeight: '100vh',
         width: '100%',
-        backgroundColor: '#212121',
+        backgroundColor: '#232525',
         padding: '1.5rem',
         paddingBottom: '220px', // Space for fixed drop zones
       }}
@@ -306,7 +306,7 @@ export function SortScreen() {
           e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
         }}
       >
-        <RotateCcw size={20} color="#212121" />
+        <RotateCcw size={20} color="#232525" />
       </button>
 
       {/* Quick-Sort Button */}
@@ -335,7 +335,7 @@ export function SortScreen() {
             e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
           }}
         >
-          <Star size={20} color="#212121" />
+          <Star size={20} color="#232525" />
       </button>
 
       {/* Reset Confirmation Dialog */}
@@ -366,7 +366,7 @@ export function SortScreen() {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                backgroundColor: '#2A2A2A',
+                backgroundColor: '#2A2D2D',
                 borderRadius: '1rem',
                 padding: '1.5rem',
                 maxWidth: '400px',
@@ -500,7 +500,7 @@ export function SortScreen() {
                   left: '50%',
                   marginBottom: '0.5rem',
                   width: '300px',
-                  backgroundColor: '#2A2A2A',
+                  backgroundColor: '#2A2D2D',
                   borderRadius: '0.75rem',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
                   overflow: 'hidden',
@@ -570,9 +570,9 @@ export function SortScreen() {
             onClick={() => handleDropZoneClick('veryImportant')}
             animate={{
               borderColor: dragState.nearZone === 'veryImportant' 
-                ? 'rgba(93, 148, 67, 0.8)' 
+                ? 'rgba(50, 116, 249, 0.8)' 
                 : 'rgba(255, 255, 255, 0.2)',
-              backgroundColor: 'rgba(33, 33, 33, 0.75)',
+              backgroundColor: 'rgba(35, 37, 37, 0.75)',
             }}
             style={{
               minHeight: '120px',
@@ -645,7 +645,7 @@ export function SortScreen() {
                   left: '50%',
                   marginBottom: '0.5rem',
                   width: '300px',
-                  backgroundColor: '#2A2A2A',
+                  backgroundColor: '#2A2D2D',
                   borderRadius: '0.75rem',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
                   overflow: 'hidden',
@@ -715,9 +715,9 @@ export function SortScreen() {
             onClick={() => handleDropZoneClick('notSure')}
             animate={{
               borderColor: dragState.nearZone === 'notSure' 
-                ? 'rgba(200, 150, 50, 0.8)' 
+                ? 'rgba(207, 237, 90, 0.8)' 
                 : 'rgba(255, 255, 255, 0.2)',
-              backgroundColor: 'rgba(33, 33, 33, 0.75)',
+              backgroundColor: 'rgba(35, 37, 37, 0.75)',
             }}
             style={{
               minHeight: '120px',
@@ -751,7 +751,7 @@ export function SortScreen() {
                   fontFamily: "'Special Gothic Condensed One', sans-serif",
                 }}
               >
-                NOT SURE YET {notSureCards.length > 0 && <span style={{ color: '#8A8686' }}>({notSureCards.length})</span>}
+                NEUTRAL {notSureCards.length > 0 && <span style={{ color: '#8A8686' }}>({notSureCards.length})</span>}
               </motion.h3>
               <motion.span
                 initial={{ opacity: 0, y: 10 }}
@@ -790,7 +790,7 @@ export function SortScreen() {
                   left: '50%',
                   marginBottom: '0.5rem',
                   width: '300px',
-                  backgroundColor: '#2A2A2A',
+                  backgroundColor: '#2A2D2D',
                   borderRadius: '0.75rem',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
                   overflow: 'hidden',
@@ -860,9 +860,9 @@ export function SortScreen() {
             onClick={() => handleDropZoneClick('notImportant')}
             animate={{
               borderColor: dragState.nearZone === 'notImportant' 
-                ? 'rgba(197, 68, 92, 0.8)' 
+                ? 'rgba(204, 247, 169, 0.8)' 
                 : 'rgba(255, 255, 255, 0.2)',
-              backgroundColor: 'rgba(33, 33, 33, 0.75)',
+              backgroundColor: 'rgba(35, 37, 37, 0.75)',
             }}
             style={{
               minHeight: '120px',
@@ -946,7 +946,7 @@ export function SortScreen() {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
               style={{
-                backgroundColor: '#2A2A2A',
+                backgroundColor: '#2A2D2D',
                 borderRadius: '1rem',
                 padding: '2rem',
                 maxWidth: '440px',
@@ -983,7 +983,7 @@ export function SortScreen() {
                   padding: '0.875rem 2rem',
                   fontSize: '18px',
                   fontFamily: "'Special Gothic Condensed One', sans-serif",
-                  backgroundColor: '#5D9443',
+                  backgroundColor: '#3274F9',
                   color: 'white',
                   border: 'none',
                   borderRadius: '9999px',

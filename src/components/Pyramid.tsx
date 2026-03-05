@@ -192,7 +192,7 @@ export function Pyramid() {
             fontSize: '16px',
             fontFamily: "'DM Sans', sans-serif",
             fontWeight: 600,
-            backgroundColor: '#5D9443',
+            backgroundColor: '#3274F9',
             color: 'white',
             border: 'none',
             borderRadius: '9999px',
