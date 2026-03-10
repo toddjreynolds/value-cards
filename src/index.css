@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Condensed+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Condensed+One&family=Spline+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -65,5 +65,94 @@ body {
 @media (min-width: 640px) {
   .drop-zones {
     flex-direction: row;
+  }
+}
+
+/* Intro screen: two-column hero, then centered bottom section */
+.intro-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 4rem 1.5rem 2.5rem;
+  align-items: start;
+  overflow: visible;
+}
+.intro-hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  text-align: right;
+}
+.intro-hero-image-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -64px;
+  overflow: visible;
+}
+.intro-hero-image {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 750px;
+  object-fit: contain;
+  object-position: center;
+}
+.intro-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem 3rem;
+  text-align: center;
+}
+.intro-form {
+  width: 100%;
+  max-width: 26rem;
+}
+.intro-email-wrap {
+  display: flex;
+  align-items: stretch;
+  border-radius: 10px;
+  padding: 4px 4px 4px 0;
+  background-color: var(--color-card-bg);
+  overflow: hidden;
+}
+.intro-email-input {
+  flex: 1;
+  font-family: 'Spline Sans', sans-serif;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-card-bg);
+  color: #e5e7eb;
+  border: none;
+  outline: none;
+  min-width: 0;
+}
+.intro-start-btn {
+  font-family: 'Spline Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.75rem 1.5rem;
+  background-color: #CCF7A9;
+  color: #1a1a1a;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+@media (min-width: 768px) {
+  .intro-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 3rem 2rem 2.5rem;
+  }
+  .intro-hero-image-wrap {
+    justify-content: flex-start;
+  }
+  .intro-hero-image {
+    object-position: left center;
   }
 }
